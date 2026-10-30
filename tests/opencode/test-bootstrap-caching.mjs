@@ -63,6 +63,7 @@ const result = {
   secondExistsCount: afterSecond.existsCount,
   v2BootstrapParts: v2Result.bootstrapParts,
   mapsV2SubagentTool: v2Result.text.includes('`subagent` with `agent: "general"`'),
+  mapsV2ModelRouting: v2Result.text.includes('Model Routing'),
   mapsV2SessionIDContinuation: v2Result.text.includes('`sessionID` to continue a previous subagent'),
   mapsV2NoTodoTool: v2Result.text.includes('no todo tool'),
   mapsV2MutationToPatch: v2Result.text.includes('`patch` with `patchText`'),
@@ -179,6 +180,7 @@ function assertMappingConstants(mod) {
   }
   for (const needle of [
     '`subagent` with `agent: "general"`',
+    '`model` from the Model Routing section',
     '`sessionID` to continue a previous subagent',
     'no todo tool',
     '`write`',
@@ -248,6 +250,9 @@ function assertV2Bootstrap(result) {
   }
   if (!result.mapsV2SubagentTool) {
     failures.push('expected V2 bootstrap to map general-purpose subagents to subagent with agent');
+  }
+  if (!result.mapsV2ModelRouting) {
+    failures.push('expected V2 bootstrap to inject the Model Routing section');
   }
   if (!result.mapsV2SessionIDContinuation) {
     failures.push('expected V2 bootstrap to teach sessionID continuation for subagents');

@@ -77,7 +77,7 @@ const extractAndStripFrontmatter = (content) => {
 export const V1_MAPPING = `**Tool Mapping for OpenCode:**
 When skills request actions, substitute OpenCode equivalents:
 - Create or update todos → \`todowrite\`
-- \`Subagent (general-purpose):\` → \`task\` with \`subagent_type: "general"\`
+- \`Subagent (general-purpose):\` → \`task\` with \`subagent_type: "general"\` and \`model\` from the Model Routing section below
 - Invoke a skill → OpenCode's native \`skill\` tool
 - Read files → \`read\`
 - Create, edit, or delete files → \`apply_patch\`
@@ -95,7 +95,7 @@ Use OpenCode's native \`skill\` tool to list and load skills.`;
 export const V2_MAPPING = `**Tool Mapping for OpenCode:**
 When skills request actions, substitute OpenCode equivalents:
 - Create or update todos → OpenCode v2 has no todo tool; track the plan in a markdown file (or the harness's plan facility) instead
-- \`Subagent (general-purpose):\` → \`subagent\` with \`agent: "general"\` (give it \`description\` and \`prompt\`, optionally \`background\`; pass \`sessionID\` to continue a previous subagent)
+- \`Subagent (general-purpose):\` → \`subagent\` with \`agent: "general"\`; ALWAYS pass \`model\` from the Model Routing section below (an omitted model inherits the session model). Give it \`description\` and \`prompt\`, optionally \`background\`; pass \`sessionID\` to continue a previous subagent
 - Invoke a skill → OpenCode's native \`skill\` tool
 - Read files → \`read\`
 - Create, edit, or delete files → use \`patch\` with \`patchText\` when available; otherwise use \`write\` to create or overwrite files, \`edit\` for targeted changes, and \`shell\` for deletion
@@ -127,12 +127,18 @@ const getBootstrapContent = (toolMapping) => {
   const fullContent = fs.readFileSync(skillPath, 'utf8');
   const { content } = extractAndStripFrontmatter(fullContent);
 
+  const routingPath = path.join(superpowersSkillsDir, 'using-superpowers', 'model-routing.md');
+  let modelRouting = '';
+  if (fs.existsSync(routingPath)) {
+    modelRouting = `\n\n${fs.readFileSync(routingPath, 'utf8').trim()}`;
+  }
+
   _bootstrapCache.set(toolMapping, `<EXTREMELY_IMPORTANT>
 You have superpowers.
 
 **IMPORTANT: The using-superpowers skill content is included below. It is ALREADY LOADED - you are currently following it. Do NOT use the skill tool to load "using-superpowers" again - that would be redundant.**
 
-${content}
+${content}${modelRouting}
 
 ${toolMapping}
 </EXTREMELY_IMPORTANT>`);

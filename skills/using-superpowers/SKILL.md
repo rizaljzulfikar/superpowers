@@ -23,6 +23,12 @@ This is not negotiable. You cannot rationalize your way out of this.
 
 Then announce "Using [skill] to [purpose]" and follow the skill exactly. If it has a checklist, create a todo per item.
 
+## Model Routing
+
+Every Superpowers subagent dispatch must pass an explicit `model` from the
+Model Routing section injected at session start (`model-routing.md`). Never
+inherit the session model.
+
 ## Skill Priority
 
 When multiple skills apply, process skills come first — they set the approach, then implementation skills (frontend-design, etc.) carry it out. Brainstorming and systematic-debugging are Superpowers' most common process skills, but the rule holds for any of them.
